@@ -1,5 +1,7 @@
 import tkinter as tk
 import math
+import cv2
+from time import sleep
 
 class GUI():
     def __init__(self, master):
@@ -79,19 +81,26 @@ class GUI():
                     print("Robot moving left")
                 else:
                     print("Robot moving forward")
-        #Print speed, this is a value between 0 and 100 and only starts once the joystick is moved from outside a 40 by 40 square around 0, 0
-        distance_from_center = math.sqrt(joystick_position[0]**2 + joystick_position[1]**2)
+        distance_from_centre = int(math.sqrt(joystick_position[0]**2 + joystick_position[1]**2))
         if joystick_position[0] > -40 and joystick_position[0] < 40 and joystick_position[1] > -40 and joystick_position[1] < 40:
-            speed = 0
+                speed = 0
         else:
-            speed = min(max(distance_from_center / 40, 1), 100)
-            speed = int((speed/5)*100)
-            speed = min(speed, 100)
+                speed = min(max(distance_from_centre / 40, 1), 100)
+                speed = int((speed/5)*100)
+                speed = min(speed, 100)
         print("Speed: ", speed)
 
     def take_photo(self):
         #when button clicked, print "Photo Taken" to the terminal
         print("Photo Taken")
+        cam = cv2.VideoCapture(0)
+        ret, image = cam.read()
+        if ret:
+                cv2.imshow('Image', image)
+                cv2.imwrite('image.jpg', image)
+                sleep(1)
+        cam.release()
+        cv2.destroyAllWindows()
         #when button clicked, create a new window with the title "Photo"
         photo_window = tk.Toplevel(self.master)
         photo_window.title("Photo")
